@@ -93,8 +93,8 @@ class ControllerApiZStore extends Controller {
     }  
     
     /**
-    * обновление статуса ордеров
-    * 
+    * обновление статуса ордеров в  магазине
+    * передаем  массив  ключ-значение: id ордера - статус
     */
     public function updateorder() {
       
@@ -173,7 +173,7 @@ class ControllerApiZStore extends Controller {
     }
    
    /**
-   * возвращает список  категоритй  товаров
+   * возвращает список  категорий  товаров
    * 
    */
    public function cats() {
@@ -215,7 +215,7 @@ class ControllerApiZStore extends Controller {
     }
     
     /**
-    * импорт новых товаров
+    * импорт новых товаров в опенкарт
     * 
     */
     public function addproducts() {
@@ -266,8 +266,8 @@ class ControllerApiZStore extends Controller {
     }       
     
      /**
-     * обновление количества
-     * 
+     * обновление количества  товаров  в  магазине
+     * массив  ключ-значение: scu товара(артикул) - количество
      */
      public function updatequantity() {
       
@@ -306,8 +306,8 @@ class ControllerApiZStore extends Controller {
     }    
   
      /**
-     * обновление  цен
-     * 
+     * обновление  цен   в  магазине
+     * массив  ключ-значение: scu товара(артикул) - цена
      */
      public function updateprice() {
       
@@ -348,7 +348,7 @@ class ControllerApiZStore extends Controller {
     
     
     /**
-    * Список  товаров
+    * Список  товаров из опенкарта
     * 
     */
     public function getproducts() {
