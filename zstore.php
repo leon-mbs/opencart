@@ -63,8 +63,18 @@ class ControllerApiZStore extends Controller {
                     
                     $products = array();
                 
-                    $queryi = $this->db->query("SELECT op.name, p.sku,op.price,op.quantity FROM `" . DB_PREFIX . "order_product` op  join  `" . DB_PREFIX . "product` p on op.product_id = p.product_id   WHERE  op.order_id=".  $row['order_id']  );
+                    $queryi = $this->db->query("SELECT op.name, p.sku,op.price,op.quantity,op.order_product_id FROM `" . DB_PREFIX . "order_product` op  join  `" . DB_PREFIX . "product` p on op.product_id = p.product_id   WHERE  op.order_id=".  $row['order_id']  );
                     foreach ($queryi->rows as $rowi) {
+                       
+                        $options = array();
+                       
+                        $queryo = $this->db->query("SELECT name,value  FROM `" . DB_PREFIX . "order_option`  WHERE   order_id=".  $row['order_id'] ." and order_product_id=". $rowi['order_product_id']  );
+                        foreach ($queryo->rows as $rowo) {
+                            
+                            $options[$rowo['name'] ] =   $rowo['value']  ;
+                        }                       
+                       
+                        $rowi['_options_'] =$options;
                         $products[]=$rowi;
                     }
                     
@@ -93,8 +103,8 @@ class ControllerApiZStore extends Controller {
     }  
     
     /**
-    * обновление статуса ордеров в  магазине
-    * передаем  массив  ключ-значение: id ордера - статус
+    * обновление статуса ордеров
+    * 
     */
     public function updateorder() {
       
@@ -173,7 +183,7 @@ class ControllerApiZStore extends Controller {
     }
    
    /**
-   * возвращает список  категорий  товаров
+   * возвращает список  категоритй  товаров
    * 
    */
    public function cats() {
@@ -215,7 +225,7 @@ class ControllerApiZStore extends Controller {
     }
     
     /**
-    * импорт новых товаров в опенкарт
+    * импорт новых товаров
     * 
     */
     public function addproducts() {
@@ -266,8 +276,8 @@ class ControllerApiZStore extends Controller {
     }       
     
      /**
-     * обновление количества  товаров  в  магазине
-     * массив  ключ-значение: scu товара(артикул) - количество
+     * обновление количества
+     * 
      */
      public function updatequantity() {
       
@@ -306,8 +316,8 @@ class ControllerApiZStore extends Controller {
     }    
   
      /**
-     * обновление  цен   в  магазине
-     * массив  ключ-значение: scu товара(артикул) - цена
+     * обновление  цен
+     * 
      */
      public function updateprice() {
       
@@ -348,7 +358,7 @@ class ControllerApiZStore extends Controller {
     
     
     /**
-    * Список  товаров из опенкарта
+    * Список  товаров
     * 
     */
     public function getproducts() {
