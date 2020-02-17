@@ -283,7 +283,7 @@ class ControllerApiZStore extends Controller {
       
 
         $json = array();
-        $json['error']='';
+        $json['error']=''; 
         if (!isset($this->session->data['api_id'])) {
             $json['error']= "Нет доступа" ;
         } else {
@@ -291,11 +291,11 @@ class ControllerApiZStore extends Controller {
             try{
                 $data = $this->request->post['data'] ;
                 $data = str_replace('&quot;','"',$data) ;
-               
-                $list = json_decode($data,true);
-        
+                 
+                $list =  json_decode($data,true);
+                 
                 foreach ($list as $sku=>$quantity) {
-    
+                    
                     $this->db->query("UPDATE `" . DB_PREFIX . "product`    set quantity= {$quantity}   WHERE  sku =  '" . $this->db->escape($sku) . "'" );
                 }
              
@@ -375,7 +375,7 @@ class ControllerApiZStore extends Controller {
                 $store_id = (int)$this->config->get('config_store_id');
            
                 $json['products'] = array();
-                $sql="SELECT p.sku,p.price,pd.name,pd.description FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id   WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
+                $sql="SELECT p.sku,p.price,p.image,pd.name,pd.description FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id   WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
                 
                 $query = $this->db->query($sql)  ;
              
