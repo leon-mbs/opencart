@@ -63,18 +63,20 @@ class ControllerApiZStore extends Controller {
                     
                     $products = array();
                 
-                    $queryi = $this->db->query("SELECT op.name, p.sku,op.price,op.quantity,op.order_product_id FROM `" . DB_PREFIX . "order_product` op  join  `" . DB_PREFIX . "product` p on op.product_id = p.product_id   WHERE  op.order_id=".  $row['order_id']  );
+                    
+                    $queryi = $this->db->query("SELECT op.name, p.sku,op.price,op.quantity,op.order_product_id FROM `" . DB_PREFIX . "order_product` op  join  `" . DB_PREFIX . "product` p on op.product_id = p.product_id   WHERE  op.order_id=".  $row['order_id']  ); 
                     foreach ($queryi->rows as $rowi) {
-                       
+     
                         $options = array();
-                       
+
                         $queryo = $this->db->query("SELECT name,value  FROM `" . DB_PREFIX . "order_option`  WHERE   order_id=".  $row['order_id'] ." and order_product_id=". $rowi['order_product_id']  );
                         foreach ($queryo->rows as $rowo) {
-                            
+
                             $options[$rowo['name'] ] =   $rowo['value']  ;
                         }                       
+
+                        $rowi['_options_'] = $options;                      
                        
-                        $rowi['_options_'] =$options;
                         $products[]=$rowi;
                     }
                     
@@ -283,7 +285,7 @@ class ControllerApiZStore extends Controller {
       
 
         $json = array();
-        $json['error']=''; 
+        $json['error']='';
         if (!isset($this->session->data['api_id'])) {
             $json['error']= "Нет доступа" ;
         } else {
@@ -291,11 +293,11 @@ class ControllerApiZStore extends Controller {
             try{
                 $data = $this->request->post['data'] ;
                 $data = str_replace('&quot;','"',$data) ;
-                 
-                $list =  json_decode($data,true);
-                 
+               
+                $list = json_decode($data,true);
+                
                 foreach ($list as $sku=>$quantity) {
-                    
+    
                     $this->db->query("UPDATE `" . DB_PREFIX . "product`    set quantity= {$quantity}   WHERE  sku =  '" . $this->db->escape($sku) . "'" );
                 }
              
