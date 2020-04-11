@@ -316,7 +316,8 @@ class ControllerApiZStore extends Controller {
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }    
-  
+   
+   
      /**
      * обновление  цен
      * 
@@ -377,7 +378,7 @@ class ControllerApiZStore extends Controller {
                 $store_id = (int)$this->config->get('config_store_id');
            
                 $json['products'] = array();
-                $sql="SELECT p.sku,p.price,p.image,pd.name,pd.description FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id   WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
+                $sql="SELECT p.sku,p.price,p.image,pd.name,pd.description,p.weight,p.weight_class_id FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id   WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
                 
                 $query = $this->db->query($sql)  ;
              
