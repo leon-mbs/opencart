@@ -250,13 +250,12 @@ class ControllerApiZStore extends Controller {
                 
  
                 foreach($list as $pr){
-                     $this->db->query("INSERT INTO `" . DB_PREFIX . "product`   ( model, sku,quantity,price,status,    date_added) values ('" . $this->db->escape($pr['sku']) . "','" . $this->db->escape($pr['sku']) . "',{$pr['quantity']},{$pr['price']},0,now())");
+                     $this->db->query("INSERT INTO `" . DB_PREFIX . "product`   (  sku,quantity,price,status,    date_added) values ('" . $this->db->escape($pr['sku']) . "',{$pr['quantity']},{$pr['price']},0,now())");
                      $product_id = $this->db->getLastId();
                 
                      $this->db->query("INSERT INTO " . DB_PREFIX . "product_description  (product_id,language_id,name,description) values ( {$product_id},{$language_id},'" . $this->db->escape($pr['name']) . "',   '" . $this->db->escape($pr['description'])."')");
                      $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_store (product_id,store_id) values({$product_id}, {$store_id})");
-                     if($category_id>0)
-                        $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category  (product_id,category_id,main_category) values({$product_id}, {$category_id}, 1)");
+                     $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category  (product_id,category_id,main_category) values({$product_id}, {$category_id}, 1)");
             
                 } 
                  
@@ -317,7 +316,8 @@ class ControllerApiZStore extends Controller {
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }    
-  
+   
+   
      /**
      * обновление  цен
      * 
@@ -378,9 +378,8 @@ class ControllerApiZStore extends Controller {
                 $store_id = (int)$this->config->get('config_store_id');
            
                 $json['products'] = array();
-                $sql="SELECT p.sku,p.price,p.image,pd.name,pd.description,p.weight,p.weight_class_id FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id   WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
-                
-                
+               $sql="SELECT p.sku,p.price,p.image,pd.name,pd.description,p.weight,p.weight_class_id, m.name as manufacturer FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id  left join  `" . DB_PREFIX . "manufacturer` m on p.manufacturer_id=m.manufacturer_id  WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
+            
                 $query = $this->db->query($sql)  ;
              
                 foreach ($query->rows as $row) {
@@ -405,43 +404,5 @@ class ControllerApiZStore extends Controller {
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }  
-
-    public function updateitemstatus() {
-      
-
-        $json = array();
-        $json['error']='';
-        if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
-        } else {
-           
-            try{
-                $data = $this->request->post['data'] ;
-                $data = str_replace('&quot;','"',$data) ;
-               
-                $list = json_decode($data,true);
-                
-                foreach ($list as $sku=>$status) {
-    
-                    $this->db->query("UPDATE `" . DB_PREFIX . "product`    set status= {$status}   WHERE  sku =  '" . $this->db->escape($sku) . "'" );
-                }
-             
-            }catch(Exception $e){
-               $json['error'] = $e->getMessage(); 
-            }
-        }
-
-        if (isset($this->request->server['HTTP_ORIGIN'])) {
-            $this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
-            $this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-            $this->response->addHeader('Access-Control-Max-Age: 1000');
-            $this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-        }
-
-        $this->response->addHeader('Content-Type: application/json');
-        $this->response->setOutput(json_encode($json));
-    }    
- 
-   
-    
+     
 }
