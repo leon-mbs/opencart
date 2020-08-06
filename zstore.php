@@ -250,7 +250,7 @@ class ControllerApiZStore extends Controller {
                 
  
                 foreach($list as $pr){
-                     $this->db->query("INSERT INTO `" . DB_PREFIX . "product`   (  sku,quantity,price,status,    date_added) values ('" . $this->db->escape($pr['sku']) . "',{$pr['quantity']},{$pr['price']},0,now())");
+                     $this->db->query("INSERT INTO `" . DB_PREFIX . "product`   ( model, sku,quantity,price,status,    date_added) values ('" . $this->db->escape($pr['sku']) . "','" . $this->db->escape($pr['sku']) . "',{$pr['quantity']},{$pr['price']},0,now())");
                      $product_id = $this->db->getLastId();
                 
                      $this->db->query("INSERT INTO " . DB_PREFIX . "product_description  (product_id,language_id,name,description) values ( {$product_id},{$language_id},'" . $this->db->escape($pr['name']) . "',   '" . $this->db->escape($pr['description'])."')");
