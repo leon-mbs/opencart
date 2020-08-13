@@ -253,7 +253,7 @@ class ControllerApiZStore extends Controller {
                      $this->db->query("INSERT INTO `" . DB_PREFIX . "product`   ( model, sku,quantity,price,status,    date_added) values ('" . $this->db->escape($pr['sku']) . "','" . $this->db->escape($pr['sku']) . "',{$pr['quantity']},{$pr['price']},0,now())");
                      $product_id = $this->db->getLastId();
                 
-                     $this->db->query("INSERT INTO " . DB_PREFIX . "product_description  (product_id,language_id,name,description) values ( {$product_id},{$language_id},'" . $this->db->escape($pr['name']) . "',   '" . $this->db->escape($pr['description'])."')");
+                     $this->db->query("INSERT INTO " . DB_PREFIX . "product_description  (product_id,language_id,name  ) values ( {$product_id},{$language_id},'" . $this->db->escape($pr['name']) . "')");
                      $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_store (product_id,store_id) values({$product_id}, {$store_id})");
                      $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category  (product_id,category_id,main_category) values({$product_id}, {$category_id}, 1)");
             
@@ -378,7 +378,8 @@ class ControllerApiZStore extends Controller {
                 $store_id = (int)$this->config->get('config_store_id');
            
                 $json['products'] = array();
-               $sql="SELECT p.sku,p.price,p.image,pd.name,pd.description,p.weight,p.weight_class_id, m.name as manufacturer FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id  left join  `" . DB_PREFIX . "manufacturer` m on p.manufacturer_id=m.manufacturer_id  WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
+             
+                $sql="SELECT p.sku,p.price,p.image,pd.name, p.weight,p.weight_class_id, m.name as manufacturer FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id  left join  `" . DB_PREFIX . "manufacturer` m on p.manufacturer_id=m.manufacturer_id  WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
             
                 $query = $this->db->query($sql)  ;
              
