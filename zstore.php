@@ -255,7 +255,7 @@ class ControllerApiZStore extends Controller {
                 
                      $this->db->query("INSERT INTO " . DB_PREFIX . "product_description  (product_id,language_id,name  ) values ( {$product_id},{$language_id},'" . $this->db->escape($pr['name']) . "')");
                      $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_store (product_id,store_id) values({$product_id}, {$store_id})");
-                     $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category  (product_id,category_id,main_category) values({$product_id}, {$category_id}, 1)");
+                     $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category  (product_id,category_id  ) values({$product_id}, {$category_id} )");
             
                 } 
                  
