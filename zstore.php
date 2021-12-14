@@ -379,7 +379,7 @@ class ControllerApiZStore extends Controller {
            
                 $json['products'] = array();
              
-                $sql="SELECT p.sku,p.price,p.image,pd.name, p.weight,p.weight_class_id, m.name as manufacturer,(select coalesce(max(category_id),0) from `" . DB_PREFIX . "product_to_category` pc where  pc.product_id = p.product_id  and main_category=1 ) as  cat_id FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id  left join  `" . DB_PREFIX . "manufacturer` m on p.manufacturer_id=m.manufacturer_id  WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
+                $sql="SELECT p.sku,p.price,p.image,pd.name, p.weight,p.weight_class_id, m.name as manufacturer,(select coalesce(max(category_id),0) from `" . DB_PREFIX . "product_to_category` pc where  pc.product_id = p.product_id    ) as  cat_id FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id  left join  `" . DB_PREFIX . "manufacturer` m on p.manufacturer_id=m.manufacturer_id  WHERE  pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
             
                 $query = $this->db->query($sql)  ;
              
