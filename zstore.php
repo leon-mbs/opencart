@@ -110,6 +110,7 @@ class ControllerApiZStore extends Controller {
     */
     public function updateorder() {
       
+        $this->load->model('checkout/order'); // Загружаем модель заказов
 
         $json = array();
         $json['error']='';
@@ -124,7 +125,16 @@ class ControllerApiZStore extends Controller {
                 $list = json_decode($data,true);
         
                 foreach ($list as $order_id=>$status) {
-                     $this->db->query("UPDATE `" . DB_PREFIX . "order` o  set o.order_status_id= {$status}   WHERE  o.store_id =  " . (int)$this->config->get('config_store_id') . " and o.order_id=".  $order_id   );
+                //    $this->db->query("UPDATE `" . DB_PREFIX . "order` o  set o.order_status_id= {$status}   WHERE  o.store_id =  " . (int)$this->config->get('config_store_id') . " and o.order_id=".  $order_id   );
+                  
+                    $this->model_checkout_order->addOrderHistory(
+                        (int)$order_id,
+                        (int)$status,
+                        'By ZStore API',
+                        false,
+                        true
+                    ); 
+                                       
                 }
                 
              
