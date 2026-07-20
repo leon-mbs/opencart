@@ -12,7 +12,7 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']= "" ;  
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
@@ -51,7 +51,7 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']= "" ;
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
@@ -115,7 +115,7 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']='';
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
@@ -165,7 +165,7 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']= "" ;  
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
@@ -204,7 +204,7 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']= "" ;  
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
@@ -237,7 +237,7 @@ class ControllerApiZStore extends Controller {
     }
     
     /**
-    * импорт новых товаров
+    * импорт новых товаров в опенкарт  
     * 
     */
     public function addproducts() {
@@ -246,7 +246,7 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']='';
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
@@ -288,7 +288,7 @@ class ControllerApiZStore extends Controller {
     }       
     
      /**
-     * обновление количества
+     * обновление количества в  опенкарте
      * 
      */
      public function updatequantity() {
@@ -297,13 +297,13 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']='';
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
                 $data = $this->request->post['data'] ;
                 $data = str_replace('&quot;','"',$data) ;
-               
+              
                 $list = json_decode($data,true);
                 
                 foreach ($list as $sku=>$quantity) {
@@ -329,7 +329,7 @@ class ControllerApiZStore extends Controller {
    
    
      /**
-     * обновление  цен
+     * обновление  цен  в  опенкарте
      * 
      */
      public function updateprice() {
@@ -338,13 +338,13 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']='';
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
                 $data = $this->request->post['data'] ;
                 $data = str_replace('&quot;','"',$data) ;
-               
+              
                 $list = json_decode($data,true);
         
                 foreach ($list as $sku=>$price) {
@@ -371,7 +371,7 @@ class ControllerApiZStore extends Controller {
     
     
     /**
-    * Список  товаров
+    * Список  товаров  из  опенкарта
     * 
     */
     public function getproducts() {
@@ -380,7 +380,7 @@ class ControllerApiZStore extends Controller {
         $json = array();
         $json['error']= "" ;
         if (!isset($this->session->data['api_id'])) {
-            $json['error']= "Нет доступа" ;
+            $json['error']= "No access" ;
         } else {
            
             try{
@@ -415,5 +415,116 @@ class ControllerApiZStore extends Controller {
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }  
+   
+   
+   
+   
+    /**
+    * Список названий
+    * 
+    */
+    public function getnames() {
+      
+
+        $json = array();
+        $json['error']= "" ;
+        if (!isset($this->session->data['api_id'])) {
+            $json['error']= "No access" ;
+        } else {
+           
+            try{
+                $language_id = (int)$this->config->get('config_language_id') ;
+                $store_id = (int)$this->config->get('config_store_id');
+           
+                $json['names'] = array();
+             
+                $sql="SELECT p.sku, pd.name FROM `" . DB_PREFIX . "product` p  join  `" . DB_PREFIX . "product_description` pd on p.product_id=pd.product_id   WHERE p.status=1 and pd.language_id={$language_id}  and p.product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
+            
+                $query = $this->db->query($sql)  ;
+             
+                foreach ($query->rows as $row) {
+                    if(strlen($row['sku'])==0)  continue;
+                    $json['names'][] =  $row ;  
+                    
+                }
+                
+             
+            }catch(Exception $e){
+               $json['error'] = $e->getMessage(); 
+            }
+        }
+
+        if (isset($this->request->server['HTTP_ORIGIN'])) {
+            $this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+            $this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+            $this->response->addHeader('Access-Control-Max-Age: 1000');
+            $this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }  
      
+     
+   /**
+     * обновление названний в  опенкарте
+     * 
+     */
+     public function updatenames() {
+      
+
+        $json = array();
+        $json['error']='';
+        if (!isset($this->session->data['api_id'])) {
+            $json['error']= "No access" ;
+        } else {
+           
+            try{
+              
+                $language_id = (int)$this->config->get('config_language_id') ;
+                $store_id = (int)$this->config->get('config_store_id');
+           
+                $data = $this->request->post['data'] ;
+                $data = str_replace('&quot;','"',$data) ;
+              
+                $list = json_decode($data,true);
+        
+                foreach ($list as $sku=>$name) {
+                    $sql=  "select product_id from `" . DB_PREFIX . "product`     WHERE  sku =  '" . $this->db->escape($sku) . "'  and     product_id in(select product_id from " . DB_PREFIX . "product_to_store  where store_id={$store_id} ) ";
+                 
+                    $query=  $this->db->query( $sql);
+                    
+                    foreach ($query->rows as $row) {
+                                          
+                        $product_id= intval($row['product_id']) ;
+                   
+                        $sql=  "UPDATE " . DB_PREFIX . "product_description set name= '" . $this->db->escape($name) . "'  where product_id = {$product_id} and language_id = {$language_id}   ";
+                   
+                        $this->db->query($sql);
+                        break;
+                        
+                    }  
+               
+                                                        
+                }
+                
+             
+            }catch(Exception $e){
+               $json['error'] =  $e->getMessage(); 
+            }
+        }
+
+        if (isset($this->request->server['HTTP_ORIGIN'])) {
+            $this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);
+            $this->response->addHeader('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+            $this->response->addHeader('Access-Control-Max-Age: 1000');
+            $this->response->addHeader('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }    
+    
+         
+      
 }
